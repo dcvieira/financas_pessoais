@@ -1,27 +1,39 @@
+import 'package:financas_pessoais/models/tipo_lancamento.dart';
+import 'package:financas_pessoais/models/transacao.dart';
+import 'package:financas_pessoais/util/helper_colors.dart';
+import 'package:financas_pessoais/util/helper_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TransacaoListItem extends StatelessWidget {
-  const TransacaoListItem({Key? key}) : super(key: key);
+  final Transacao transacao;
+  const TransacaoListItem({Key? key, required this.transacao})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const ListTile(
+    return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.amber,
+        backgroundColor:
+            HelperColors.mapColors[transacao.categoria.categoriaCor],
         child: Icon(
-          Icons.home,
+          HelperIcons.mapIcons[transacao.categoria.categoriaIcone],
           size: 20,
           color: Colors.white,
         ),
       ),
-      title: Text("Compras no Mercado"),
-      subtitle: Text('17/07/2022'),
+      title: Text(transacao.descricao),
+      subtitle: Text(DateFormat('MM/dd/yyyy').format(transacao.data)),
       trailing: Text(
-        'Despesa',
+        transacao.tipoTransacao == TipoTransacao.despesa
+            ? 'Despesa'
+            : 'Receita',
         style: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 15,
-          color: Colors.pink,
+          color: transacao.tipoTransacao == TipoTransacao.despesa
+              ? Colors.pink
+              : Colors.green,
         ),
       ),
     );

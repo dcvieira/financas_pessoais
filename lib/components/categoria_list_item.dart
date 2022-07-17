@@ -1,26 +1,37 @@
+import 'package:financas_pessoais/models/categorial.dart';
+import 'package:financas_pessoais/models/tipo_lancamento.dart';
+import 'package:financas_pessoais/util/helper_colors.dart';
+import 'package:financas_pessoais/util/helper_icons.dart';
 import 'package:flutter/material.dart';
 
 class CategoriaListItem extends StatelessWidget {
-  const CategoriaListItem({Key? key}) : super(key: key);
+  final Categoria categoria;
+
+  const CategoriaListItem({Key? key, required this.categoria})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const ListTile(
+    return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.amber,
+        backgroundColor: HelperColors.mapColors[categoria.categoriaCor],
         child: Icon(
-          Icons.home,
+          HelperIcons.mapIcons[categoria.categoriaIcone],
           size: 20,
           color: Colors.white,
         ),
       ),
-      title: Text("Mercado"),
+      title: Text(categoria.categoriaDescricao),
       trailing: Text(
-        'Despesa',
+        categoria.categoriaTipoTransacao == TipoTransacao.despesa
+            ? 'Despesa'
+            : 'Receita',
         style: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 15,
-          color: Colors.pink,
+          color: categoria.categoriaTipoTransacao == TipoTransacao.despesa
+              ? Colors.pink
+              : Colors.green,
         ),
       ),
     );
