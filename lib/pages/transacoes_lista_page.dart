@@ -1,3 +1,4 @@
+import 'package:financas_pessoais/components/transacao_list_item.dart';
 import 'package:flutter/material.dart';
 
 class TransacoesListaPage extends StatefulWidget {
@@ -10,8 +11,19 @@ class TransacoesListaPage extends StatefulWidget {
 class _TransacoesListaPageState extends State<TransacoesListaPage> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Listagem de Transações'),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Transações')),
+      body: ListView(
+        children: [
+          TransacaoListItem(),
+          Divider(),
+          TransacaoListItem(),
+          Divider(),
+          TransacaoListItem(),
+          Divider(),
+          TransacaoListItem(),
+        ],
+      ),
     );
   }
 }
