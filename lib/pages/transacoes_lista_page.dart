@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/components/transacao_list_item.dart';
+import 'package:financas_pessoais/models/transacao.dart';
 import 'package:financas_pessoais/repository/transacao_repository.dart';
 import 'package:flutter/material.dart';
 
@@ -10,20 +11,33 @@ class TransacoesListaPage extends StatefulWidget {
 }
 
 class _TransacoesListaPageState extends State<TransacoesListaPage> {
-  final _transacoes = TransacaoRepository().listarTransacoes();
+  final _futureTransacoes = TransacaoRepository().listarTransacoes();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Transações')),
-      body: ListView.separated(
-        itemCount: _transacoes.length,
-        itemBuilder: (context, index) {
-          final transacao = _transacoes[index];
-          return TransacaoListItem(transacao: transacao);
-        },
-        separatorBuilder: (context, index) => const Divider(),
-      ),
+      body: FutureBuilder<List<Transacao>>(
+          future: _futureTransacoes,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              final transacoes = snapshot.data ?? [];
+              return ListView.separated(
+                itemCount: transacoes.length,
+                itemBuilder: (context, index) {
+                  final transacao = transacoes[index];
+                  return TransacaoListItem(transacao: transacao);
+                },
+                separatorBuilder: (context, index) => const Divider(),
+              );
+            }
+            return Container();
+          }),
     );
   }
 }

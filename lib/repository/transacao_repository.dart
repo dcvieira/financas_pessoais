@@ -1,10 +1,15 @@
+import 'package:financas_pessoais/database/fake_database.dart';
 import 'package:financas_pessoais/models/tipo_lancamento.dart';
 import 'package:financas_pessoais/models/transacao.dart';
 
 import '../models/categorial.dart';
 
 class TransacaoRepository {
-  List<Transacao> listarTransacoes() {
+  Future<List<Transacao>> listarTransacoes() async {
+    var connected = await FakeDatabase().connectDatabase();
+
+    if (!connected) return [];
+
     return [
       Transacao(
         descricao: 'Almoço',

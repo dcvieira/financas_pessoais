@@ -12,20 +12,33 @@ class CategoriasListaPage extends StatefulWidget {
 }
 
 class _CategoriasListaPageState extends State<CategoriasListaPage> {
-  final List<Categoria> _categorias = CategoriaRepository().listarCategorias();
+  final _futureCategorias = CategoriaRepository().listarCategorias();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Categorias')),
-      body: ListView.separated(
-        itemCount: _categorias.length,
-        itemBuilder: (context, index) {
-          final categoria = _categorias[index];
-          return CategoriaListItem(categoria: categoria);
-        },
-        separatorBuilder: (context, index) => const Divider(),
-      ),
+      body: FutureBuilder<List<Categoria>>(
+          future: _futureCategorias,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              final categorias = snapshot.data ?? [];
+              return ListView.separated(
+                itemCount: categorias.length,
+                itemBuilder: (context, index) {
+                  final categoria = categorias[index];
+                  return CategoriaListItem(categoria: categoria);
+                },
+                separatorBuilder: (context, index) => const Divider(),
+              );
+            }
+            return Container();
+          }),
     );
   }
 }

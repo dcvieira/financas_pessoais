@@ -1,8 +1,14 @@
+import 'package:financas_pessoais/database/fake_database.dart';
+
 import '../models/categorial.dart';
 import '../models/tipo_lancamento.dart';
 
 class CategoriaRepository {
-  List<Categoria> listarCategorias() {
+  Future<List<Categoria>> listarCategorias() async {
+    var connected = await FakeDatabase().connectDatabase();
+
+    if (!connected) return [];
+
     return [
       Categoria(
         id: 1,
