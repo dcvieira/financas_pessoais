@@ -36,6 +36,10 @@ class TransacaoListItem extends StatelessWidget {
               : Colors.green,
         ),
       ),
+      onTap: () {
+        Navigator.pushNamed(context, '/transacao-detalhes',
+            arguments: transacao);
+      },
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:financas_pessoais/pages/home_page.dart';
+import 'package:financas_pessoais/pages/transacao_detalhes_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,7 +18,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      routes: {
+        '/': (context) => const HomePage(),
+        '/transacao-detalhes': (context) => const TransacaoDetalhesPage(),
+      },
+      initialRoute: '/',
     );
   }
 }
