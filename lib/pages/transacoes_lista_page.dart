@@ -18,26 +18,32 @@ class _TransacoesListaPageState extends State<TransacoesListaPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Transações')),
       body: FutureBuilder<List<Transacao>>(
-          future: _futureTransacoes,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.connectionState == ConnectionState.done) {
-              final transacoes = snapshot.data ?? [];
-              return ListView.separated(
-                itemCount: transacoes.length,
-                itemBuilder: (context, index) {
-                  final transacao = transacoes[index];
-                  return TransacaoListItem(transacao: transacao);
-                },
-                separatorBuilder: (context, index) => const Divider(),
-              );
-            }
-            return Container();
-          }),
+        future: _futureTransacoes,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            final transacoes = snapshot.data ?? [];
+            return ListView.separated(
+              itemCount: transacoes.length,
+              itemBuilder: (context, index) {
+                final transacao = transacoes[index];
+                return TransacaoListItem(transacao: transacao);
+              },
+              separatorBuilder: (context, index) => const Divider(),
+            );
+          }
+          return Container();
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed('/transacao-cadastro');
+          },
+          child: const Icon(Icons.add)),
     );
   }
 }
