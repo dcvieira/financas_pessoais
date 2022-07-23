@@ -11,7 +11,7 @@ class TransacoesListaPage extends StatefulWidget {
 }
 
 class _TransacoesListaPageState extends State<TransacoesListaPage> {
-  final _futureTransacoes = TransacaoRepository().listarTransacoes();
+  var _futureTransacoes = TransacaoRepository().listarTransacoes();
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +40,14 @@ class _TransacoesListaPageState extends State<TransacoesListaPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed('/transacao-cadastro');
+          onPressed: () async {
+            final success = await Navigator.of(context)
+                .pushNamed('/transacao-cadastro') as bool?;
+            if (success != null && success) {
+              setState(() {
+                _futureTransacoes = TransacaoRepository().listarTransacoes();
+              });
+            }
           },
           child: const Icon(Icons.add)),
     );

@@ -1,57 +1,80 @@
-import 'package:financas_pessoais/database/fake_database.dart';
+import 'package:financas_pessoais/database/database_manager.dart';
 import 'package:financas_pessoais/models/tipo_lancamento.dart';
 import 'package:financas_pessoais/models/transacao.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../models/categorial.dart';
 
 class TransacaoRepository {
   Future<List<Transacao>> listarTransacoes() async {
-    var connected = await FakeDatabase().connectDatabase();
+    Database db = await DatabaseManager.instance.database;
+    List rows = await db.rawQuery('''
+          SELECT 
+            transacoes.id, 
+            transacoes.descricao,
+            transacoes.tipoTransacao,
+            transacoes.valor, 
+            transacoes.categoriaId, 
+            transacoes.data,
+            transacoes.observacao, 
+            categorias.categoriaDescricao,
+            categorias.categoriaCor,
+            categorias.categoriaIcone,
+            categorias.categoriaTipoTransacao
+          FROM transacoes
+    INNER JOIN categorias ON categorias.id = transacoes.categoriaId
+''');
+    return rows
+        .map(
+          (row) => Transacao(
+            id: row['id'] as int,
+            descricao: row['descricao'],
+            tipoTransacao: TipoTransacao.values[row['tipoTransacao'] as int],
+            valor: double.parse(row['valor'].toString()),
+            data: DateTime.fromMillisecondsSinceEpoch(row['data']),
+            observacao: row['observacao'],
+            categoria: Categoria(
+                id: row['categoriaId'],
+                categoriaCor: row['categoriaCor'],
+                categoriaDescricao: row['categoriaDescricao'],
+                categoriaIcone: row['categoriaIcone'],
+                categoriaTipoTransacao:
+                    TipoTransacao.values[row['categoriaTipoTransacao'] as int]),
+          ),
+        )
+        .toList();
+  }
 
-    if (!connected) return [];
+  Future<int> cadastrarTransacao(Transacao transacao) async {
+    Database db = await DatabaseManager.instance.database;
+    return db.insert('transacoes', {
+      'descricao': transacao.descricao,
+      'tipoTransacao': transacao.tipoTransacao.index,
+      'valor': transacao.valor,
+      'data': transacao.data.millisecondsSinceEpoch,
+      'observacao': transacao.observacao,
+      'categoriaId': transacao.categoria.id,
+    });
+  }
 
-    return [
-      Transacao(
-        descricao: 'Almoço',
-        valor: 25,
-        tipoTransacao: TipoTransacao.despesa,
-        data: DateTime.now(),
-        observacao: 'Almoço do dia de trabalho',
-        categoria: Categoria(
-          id: 1,
-          categoriaDescricao: 'Alimentação',
-          categoriaCor: 'pink',
-          categoriaIcone: 'restaurant',
-          categoriaTipoTransacao: TipoTransacao.despesa,
-        ),
-      ),
-      Transacao(
-        descricao: 'Curso de Inglês',
-        valor: 350,
-        tipoTransacao: TipoTransacao.despesa,
-        data: DateTime.now(),
-        observacao: 'Parcela 5/12 do curso',
-        categoria: Categoria(
-          id: 3,
-          categoriaDescricao: 'Educação',
-          categoriaCor: 'indigo',
-          categoriaIcone: 'school',
-          categoriaTipoTransacao: TipoTransacao.despesa,
-        ),
-      ),
-      Transacao(
-        descricao: 'Salário do Mês',
-        valor: 350,
-        tipoTransacao: TipoTransacao.receita,
-        data: DateTime.now(),
-        categoria: Categoria(
-          id: 7,
-          categoriaDescricao: 'Salário',
-          categoriaCor: 'green',
-          categoriaIcone: 'money',
-          categoriaTipoTransacao: TipoTransacao.receita,
-        ),
-      ),
-    ];
+  Future<void> removerTransacao(int id) async {
+    Database db = await DatabaseManager.instance.database;
+    await db.delete('transacoes', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> editarTransacao(Transacao transacao) async {
+    Database db = await DatabaseManager.instance.database;
+    return db.update(
+        'transacoes',
+        {
+          'descricao': transacao.descricao,
+          'tipoLancamento': transacao.tipoTransacao.index,
+          'valor': transacao.valor,
+          'data': transacao.data.millisecondsSinceEpoch,
+          'observacao': transacao.observacao,
+          'categoriaId': transacao.categoria.id,
+        },
+        where: 'id = ?',
+        whereArgs: [transacao.id]);
   }
 }

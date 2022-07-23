@@ -1,6 +1,7 @@
 import 'package:financas_pessoais/models/tipo_lancamento.dart';
 import 'package:financas_pessoais/models/transacao.dart';
 import 'package:financas_pessoais/repository/categoria_repository.dart';
+import 'package:financas_pessoais/repository/transacao_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +23,7 @@ class _TransacaoCadastroPageState extends State<TransacaoCadastroPage> {
   final _dataController = TextEditingController();
   final _observacaoController = TextEditingController();
 
+  final transacaoRepository = TransacaoRepository();
   Categoria? _categoriaSelecionada;
   TipoTransacao tipoTransacaoSelecionada = TipoTransacao.receita;
   List<Categoria> _categorias = [];
@@ -109,7 +111,7 @@ class _TransacaoCadastroPageState extends State<TransacaoCadastroPage> {
               categoria: categoria,
             );
 
-            //Todo persistir a transacao
+            await transacaoRepository.cadastrarTransacao(transacao);
 
             final tipoTransacao =
                 transacao.tipoTransacao == TipoTransacao.receita
