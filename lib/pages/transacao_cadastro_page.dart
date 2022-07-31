@@ -116,8 +116,8 @@ class _TransacaoCadastroPageState extends State<TransacaoCadastroPage> {
                     ? 'Receita'
                     : 'Despesa';
 
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$tipoTransacao cadastro com sucesso')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('$tipoTransacao cadastrada com sucesso')));
 
             Navigator.of(context).pop(true);
           }
