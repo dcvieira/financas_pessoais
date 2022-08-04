@@ -25,16 +25,13 @@ class TransacaoListItem extends StatelessWidget {
       title: Text(transacao.descricao),
       subtitle: Text(DateFormat('MM/dd/yyyy').format(transacao.data)),
       trailing: Text(
-        transacao.tipoTransacao == TipoTransacao.despesa
-            ? 'Despesa'
-            : 'Receita',
+        NumberFormat.simpleCurrency(locale: 'pt_BR').format(transacao.valor),
         style: TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 15,
-          color: transacao.tipoTransacao == TipoTransacao.despesa
-              ? Colors.pink
-              : Colors.green,
-        ),
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+            color: transacao.tipoTransacao == TipoTransacao.despesa
+                ? Colors.pink
+                : Colors.green),
       ),
       onTap: () {
         Navigator.pushNamed(context, '/transacao-detalhes',

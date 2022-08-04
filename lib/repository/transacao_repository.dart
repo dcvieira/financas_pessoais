@@ -41,7 +41,7 @@ class TransacaoRepository {
       ),
       Transacao(
         descricao: 'Salário do Mês',
-        valor: 350,
+        valor: 3500,
         tipoTransacao: TipoTransacao.receita,
         data: DateTime.now(),
         categoria: Categoria(
