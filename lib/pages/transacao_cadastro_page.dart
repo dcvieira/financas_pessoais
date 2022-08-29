@@ -1,6 +1,7 @@
 import 'package:financas_pessoais/models/tipo_lancamento.dart';
 import 'package:financas_pessoais/models/transacao.dart';
 import 'package:financas_pessoais/repository/categoria_repository.dart';
+import 'package:financas_pessoais/repository/transacao_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +16,8 @@ class TransacaoCadastroPage extends StatefulWidget {
 }
 
 class _TransacaoCadastroPageState extends State<TransacaoCadastroPage> {
+  final _categoriaRepositor = CategoriaRepository();
+  final _transacaoRepository = TransacaoRepository();
   final _valorController = MoneyMaskedTextController(
       decimalSeparator: ',', thousandSeparator: '.', leftSymbol: 'R\$');
 
@@ -33,7 +36,7 @@ class _TransacaoCadastroPageState extends State<TransacaoCadastroPage> {
   }
 
   Future<void> carregarCategorias() async {
-    final categorias = await CategoriaRepository().listarCategorias();
+    final categorias = await _categoriaRepositor.listarCategorias();
 
     setState(() {
       _categorias = categorias
@@ -109,7 +112,7 @@ class _TransacaoCadastroPageState extends State<TransacaoCadastroPage> {
               categoria: categoria,
             );
 
-            //Todo persistir a transacao
+            await _transacaoRepository.cadastrarTransacao(transacao);
 
             final tipoTransacao =
                 transacao.tipoTransacao == TipoTransacao.receita

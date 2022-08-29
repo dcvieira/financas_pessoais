@@ -43,4 +43,18 @@ class TransacaoRepository {
         )
         .toList();
   }
+
+  Future<void> cadastrarTransacao(Transacao transacao) async {
+    final db = await DatabaseManager().getDatabase();
+
+    db.insert("transacoes", {
+      "id": transacao.id,
+      "descricao": transacao.descricao,
+      "tipoTransacao": transacao.tipoTransacao.index,
+      "valor": transacao.valor,
+      "data": transacao.data.millisecondsSinceEpoch,
+      "observacao": transacao.observacao,
+      "categoriaId": transacao.categoria.id,
+    });
+  }
 }
