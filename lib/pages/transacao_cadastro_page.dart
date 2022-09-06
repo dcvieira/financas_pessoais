@@ -9,7 +9,8 @@ import 'package:intl/intl.dart';
 import '../models/categorial.dart';
 
 class TransacaoCadastroPage extends StatefulWidget {
-  const TransacaoCadastroPage({Key? key}) : super(key: key);
+  Transacao? transacaoParaEdicao;
+  TransacaoCadastroPage({Key? key, this.transacaoParaEdicao}) : super(key: key);
 
   @override
   State<TransacaoCadastroPage> createState() => _TransacaoCadastroPageState();
@@ -32,6 +33,18 @@ class _TransacaoCadastroPageState extends State<TransacaoCadastroPage> {
   @override
   void initState() {
     super.initState();
+
+    final transacao = widget.transacaoParaEdicao;
+    if (transacao != null) {
+      _categoriaSelecionada = transacao.categoria;
+      _descricaoController.text = transacao.descricao;
+      tipoTransacaoSelecionada = transacao.tipoTransacao;
+      _observacaoController.text = transacao.observacao;
+      _valorController.text =
+          NumberFormat.simpleCurrency(locale: 'pt_BR').format(transacao.valor);
+      _dataController.text = DateFormat('MM/dd/yyyy').format(transacao.data);
+    }
+
     carregarCategorias();
   }
 
@@ -112,17 +125,27 @@ class _TransacaoCadastroPageState extends State<TransacaoCadastroPage> {
               categoria: categoria,
             );
 
-            await _transacaoRepository.cadastrarTransacao(transacao);
-
             final tipoTransacao =
                 transacao.tipoTransacao == TipoTransacao.receita
                     ? 'Receita'
                     : 'Despesa';
 
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('$tipoTransacao cadastrada com sucesso')));
+            try {
+              if (widget.transacaoParaEdicao != null) {
+                transacao.id = widget.transacaoParaEdicao!.id;
+                await _transacaoRepository.editarTransacao(transacao);
+              } else {
+                await _transacaoRepository.cadastrarTransacao(transacao);
+              }
 
-            Navigator.of(context).pop(true);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('$tipoTransacao cadastrada com sucesso'),
+              ));
+
+              Navigator.of(context).pop(true);
+            } catch (e) {
+              Navigator.of(context).pop(false);
+            }
           }
         },
       ),

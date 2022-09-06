@@ -57,4 +57,26 @@ class TransacaoRepository {
       "categoriaId": transacao.categoria.id,
     });
   }
+
+  Future<void> removerLancamento(int id) async {
+    final db = await DatabaseManager().getDatabase();
+    await db.delete('transacoes', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> editarTransacao(Transacao transacao) async {
+    final db = await DatabaseManager().getDatabase();
+    return db.update(
+        'transacoes',
+        {
+          "id": transacao.id,
+          "descricao": transacao.descricao,
+          "tipoTransacao": transacao.tipoTransacao.index,
+          "valor": transacao.valor,
+          "data": transacao.data.millisecondsSinceEpoch,
+          "observacao": transacao.observacao,
+          "categoriaId": transacao.categoria.id,
+        },
+        where: 'id = ?',
+        whereArgs: [transacao.id]);
+  }
 }

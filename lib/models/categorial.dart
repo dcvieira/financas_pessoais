@@ -14,4 +14,7 @@ class Categoria {
     required this.categoriaIcone,
     required this.categoriaTipoTransacao,
   });
+
+  @override
+  bool operator ==(Object other) => other is Categoria && other.id == id;
 }
